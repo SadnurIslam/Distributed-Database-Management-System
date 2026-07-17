@@ -65,8 +65,9 @@ LOCATION '/bankdb/account';
 syntax: docker cp file_location_in_windows myHadoop:\test     \\myHadoop is my container here
 => docker cp D:/files/customer.csv ddbms:\test    // ddbms is the container name
 (sob file evabe copy korte hbe Linux a)
+// test a nahole root folder a nite hbe
 
-// to load data in non-partitioned table
+// to load data in non-partitioned table (do in hive)
 => load data local inpath '/test/customer.csv' into table bankdb.customer (before insert remove column name from csv file)
 
 // TO LOAD data into partitioned table
@@ -89,7 +90,7 @@ LOCATION '/bankdb/account_tmp';
 => load data local inpath '/test/Account.csv' into table bankdb.account_tmp;
 
 3. then copy from tmp table to partitioned original table
-->insert overwrite table bankdb.account partition(branch_id) select account_id, customer_id, balance, branch_id from account_tmp
+->insert overwrite table bankdb.account partition(branch_id) select account_id, customer_id, balance, branch_id from account_tmp   // column sequence thik rakhte hbe
 
 
 ## show partitions
