@@ -41,7 +41,7 @@ LOCATION '/BankDB/Account_tmp';
 
 
 
-CREATE TABLE Transactions (
+CREATE TABLE Transaction (
     transaction_id BIGINT,
     account_id BIGINT,
     amount DECIMAL(12,2)
@@ -52,19 +52,19 @@ PARTITIONED BY (
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
 STORED AS TEXTFILE
-LOCATION '/BankDB/Transactions';
+LOCATION '/BankDB/Transaction';
 
 
-CREATE TABLE Transactions_tmp (
+CREATE TABLE Transaction_tmp (
     transaction_id BIGINT,
     account_id BIGINT,
-branch_id INT,
+    branch_id INT,
     amount DECIMAL(12,2)
 )
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
 STORED AS TEXTFILE
-LOCATION '/BankDB/Transactions_tmp';
+LOCATION '/BankDB/Transaction_tmp';
 
 
 

@@ -5,11 +5,11 @@
 => docker pull macio232/hadoop-pseudo-distributed-mode
 
 ## create new container
-=>  docker run -p 9870:9870 -p 8088:8088 -it --name=ddbms macio232/hadoop-pseudo-distributed-mode   // here ddbms is container name
+=>  docker run -p 9870:9870 -p 8088:8088 -it --name=myHadoop macio232/hadoop-pseudo-distributed-mode   // here myHadoop is container name
 
 ## start and stop command to run container ( do in another terminal)
-=> docker start -i ddbms
-=> docker stop ddbms
+=> docker start -i myHadoop
+=> docker stop myHadoop
 
 
 ## check existing folder list
@@ -63,7 +63,7 @@ LOCATION '/bankdb/account';
 ## dataset insertion from windows->linux->Hadoop (open another cmd and do there)
 
 syntax: docker cp file_location_in_windows myHadoop:\test     \\myHadoop is my container here
-=> docker cp D:/files/customer.csv ddbms:/test/customer.csv    // ddbms is the container name
+=> docker cp D:/files/customer.csv myHadoop:/test/customer.csv    // ddbms is the container name
 (sob file evabe copy korte hbe Linux a)
 // test a nahole root folder a nite hbe
 
@@ -78,7 +78,7 @@ syntax: docker cp file_location_in_windows myHadoop:\test     \\myHadoop is my c
 => CREATE TABLE account_tmp (
     account_id BIGINT,
     customer_id BIGINT,
-branch_id INT,
+    branch_id INT,
     balance DECIMAL(12,2)
     
 )
@@ -123,4 +123,16 @@ insert into BankDB.customer values(11,'Sadnur', 'a@gmail.com')
 
 ## check any directory status in hadpood system
 => hdfs dfs -ls /bankdb
+
+## to drop any table:
+ drop table account_tmp;
+
+
+## add a partition:
+ALTER TABLE account
+ADD PARTITION (branch_id=6);
+
+
+## show count in each partition:
+ select branch_id, count(*) from transaction group by branch_id;
 

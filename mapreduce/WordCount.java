@@ -25,12 +25,13 @@ public class WordCount {
 
             // Choose ONLY ONE function
 
-            wordFrequency(line, output);
-            // characterFrequency(line, output);
-            // wordLengthFrequency(line, output);
+        //     wordFrequency(line, output);
+        //     characterFrequency(line, output);
+            wordLengthFrequency(line, output);
             // lineLengthCount(line, output);
             // wordsPerLine(line, key, output);
             // charactersPerLine(line, key, output);
+            // lineCharacterLengthCount(line, output);
         }
     }
 
@@ -51,10 +52,15 @@ public class WordCount {
 
             String word = tokenizer.nextToken();
 
-            output.collect(
-                    new Text(word),
-                    new IntWritable(1)
+            Text key = new Text(word);
+            IntWritable value = new IntWritable(1);
+
+            // Mapper output
+            System.out.println(
+                    "MAPPER OUTPUT: " + word + " -> 1"
             );
+
+            output.collect(key, value);
         }
     }
 
@@ -75,13 +81,23 @@ public class WordCount {
             // Ignore spaces
             if (ch != ' ') {
 
-                output.collect(
-                        new Text(String.valueOf(ch)),
-                        new IntWritable(1)
+                Text key =
+                        new Text(String.valueOf(ch));
+
+                IntWritable value =
+                        new IntWritable(1);
+
+                // Mapper output
+                System.out.println(
+                        "MAPPER OUTPUT: " + ch + " -> 1"
                 );
+
+                output.collect(key, value);
             }
         }
     }
+
+    
 
 
     // ============================================================
@@ -102,10 +118,19 @@ public class WordCount {
 
             int length = word.length();
 
-            output.collect(
-                    new Text(String.valueOf(length)),
-                    new IntWritable(1)
+            Text key =
+                    new Text(String.valueOf(length));
+
+            IntWritable value =
+                    new IntWritable(1);
+
+            // Mapper output
+            System.out.println(
+                    "MAPPER OUTPUT: " +
+                    length + " -> 1"
             );
+
+            output.collect(key, value);
         }
     }
 
@@ -131,10 +156,19 @@ public class WordCount {
             wordCount++;
         }
 
-        output.collect(
-                new Text(String.valueOf(wordCount)),
-                new IntWritable(1)
+        Text key =
+                new Text(String.valueOf(wordCount));
+
+        IntWritable value =
+                new IntWritable(1);
+
+        // Mapper output
+        System.out.println(
+                "MAPPER OUTPUT: " +
+                wordCount + " -> 1"
         );
+
+        output.collect(key, value);
     }
 
 
@@ -159,16 +193,19 @@ public class WordCount {
             wordCount++;
         }
 
-        /*
-         * key = byte offset of the line.
-         * It identifies the input record, but it is NOT
-         * necessarily the line number.
-         */
+        Text lineKey =
+                new Text("Line_" + key.get());
 
-        output.collect(
-                new Text("Line_" + key.get()),
-                new IntWritable(wordCount)
+        IntWritable value =
+                new IntWritable(wordCount);
+
+        // Mapper output
+        System.out.println(
+                "MAPPER OUTPUT: " +
+                lineKey + " -> " + wordCount
         );
+
+        output.collect(lineKey, value);
     }
 
 
@@ -184,10 +221,47 @@ public class WordCount {
 
         int characterCount = line.length();
 
-        output.collect(
-                new Text("Line_" + key.get()),
-                new IntWritable(characterCount)
+        Text lineKey =
+                new Text("Line_" + key.get());
+
+        IntWritable value =
+                new IntWritable(characterCount);
+
+        // Mapper output
+        System.out.println(
+                "MAPPER OUTPUT: " +
+                lineKey + " -> " +
+                characterCount
         );
+
+        output.collect(lineKey, value);
+    }
+
+
+    // ============================================================
+    // 7. NUMBER OF LINES HAVING THE SAME NUMBER OF CHARACTERS
+    // ============================================================
+
+    public static void lineCharacterLengthCount(
+            String line,
+            OutputCollector<Text, IntWritable> output)
+            throws IOException {
+
+        int characterCount = line.length();
+
+        Text key =
+                new Text(String.valueOf(characterCount));
+
+        IntWritable value =
+                new IntWritable(1);
+
+        // Mapper output
+        System.out.println(
+                "MAPPER OUTPUT: " +
+                characterCount + " -> 1"
+        );
+
+        output.collect(key, value);
     }
 
 
@@ -205,12 +279,32 @@ public class WordCount {
                 Reporter reporter)
                 throws IOException {
 
+            /*
+             * For problems 1-4:
+             * Sum all values.
+             *
+             * For problems 5-6:
+             * There is normally only one value for each line key,
+             * so simply return that value.
+             *
+             * The generic sum also works because there is only
+             * one value for each line key.
+             */
+
             int sum = 0;
 
             while (values.hasNext()) {
 
                 sum += values.next().get();
             }
+
+            // Reducer output
+            System.out.println(
+                    "REDUCER OUTPUT: " +
+                    key.toString() +
+                    " -> " +
+                    sum
+            );
 
             output.collect(
                     key,
@@ -224,9 +318,11 @@ public class WordCount {
     // MAIN
     // ============================================================
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args)
+            throws Exception {
 
-        JobConf conf = new JobConf(WordCount.class);
+        JobConf conf =
+                new JobConf(WordCount.class);
 
         conf.setJobName("MapReduce Task");
 
@@ -234,11 +330,18 @@ public class WordCount {
         conf.setOutputValueClass(IntWritable.class);
 
         conf.setMapperClass(Map.class);
+
         conf.setCombinerClass(Reduce.class);
+
         conf.setReducerClass(Reduce.class);
 
-        conf.setInputFormat(TextInputFormat.class);
-        conf.setOutputFormat(TextOutputFormat.class);
+        conf.setInputFormat(
+                TextInputFormat.class
+        );
+
+        conf.setOutputFormat(
+                TextOutputFormat.class
+        );
 
         FileInputFormat.setInputPaths(
                 conf,

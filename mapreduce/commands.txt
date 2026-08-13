@@ -4,6 +4,9 @@ docker ps -a
 2. Start Hadoop container
 docker start myHadoop
 
+## create new container
+=>  docker run -p 9870:9870 -p 8088:8088 -it --name=ddbms macio232/hadoop-pseudo-distributed-mode   // here ddbms is container name
+
 3. Access Hadoop container
 docker exec -it myHadoop bash
 
