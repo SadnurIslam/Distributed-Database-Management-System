@@ -30,8 +30,8 @@
 => use bankdb;
 
 => show tables;    //see all tables
-
-=> CREATE TABLE customer (      // create customer table in /bankdb/customer folder
+// create customer table in /bankdb/customer folder
+=> CREATE TABLE customer (      
     customer_id BIGINT,
     name VARCHAR(100),
     email VARCHAR(100)
@@ -42,7 +42,7 @@ STORED AS TEXTFILE
 LOCATION '/bankdb/customer';
 
 => desc customer;    // short description about customer table
-=> describe formatted customer     // large description about table
+=> describe formatted customer;     // large description about table
 
 
 ## create table with partitioned column
@@ -63,7 +63,7 @@ LOCATION '/bankdb/account';
 ## dataset insertion from windows->linux->Hadoop (open another cmd and do there)
 
 syntax: docker cp file_location_in_windows myHadoop:\test     \\myHadoop is my container here
-=> docker cp D:/files/customer.csv ddbms:\test    // ddbms is the container name
+=> docker cp D:/files/customer.csv ddbms:/test/customer.csv    // ddbms is the container name
 (sob file evabe copy korte hbe Linux a)
 // test a nahole root folder a nite hbe
 
@@ -78,8 +78,9 @@ syntax: docker cp file_location_in_windows myHadoop:\test     \\myHadoop is my c
 => CREATE TABLE account_tmp (
     account_id BIGINT,
     customer_id BIGINT,
-    balance DECIMAL(12,2),
-    branch_id INT
+branch_id INT,
+    balance DECIMAL(12,2)
+    
 )
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
